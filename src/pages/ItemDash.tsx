@@ -1,68 +1,77 @@
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 import SearchBar from "../components/SerchBar.tsx";
-import {useState} from "react";
-import {Item} from "../models/Item.ts";
+import { useState } from "react";
+import { Item } from "../models/Item.ts";
 import AddItemModal from "../components/AddItem.tsx";
 import UpdateItemModal from "../components/UpdateItem.tsx";
 
-export function ItemDash(){
-    const items = useSelector(state => state.item.items);
+export function ItemDash() {
+    const items = useSelector((state) => state.item.items);
     const [isAddModalOpen, setAddModalOpen] = useState<boolean>(false);
-
     const [isUpdateModalOpen, setUpdateModalOpen] = useState<boolean>(false);
-
-    const [selectedItem,setSelectedItem] = useState<Item|null>(null);
-
+    const [selectedItem, setSelectedItem] = useState<Item | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
 
-    const handleSearch=()=>{
+    const handleSearch = () => {
         console.log(searchTerm);
     };
-    const showAddItem=()=>{
-        setAddModalOpen(true);
 
-    }
-    const showUpdateItem=(item:Item)=>{
+    const showAddItem = () => {
+        setAddModalOpen(true);
+    };
+
+    const showUpdateItem = (item: Item) => {
         setSelectedItem(item);
         setUpdateModalOpen(true);
-
-    }
-
+    };
 
     return (
-        <>
-        <div className="flex flex-col items-center">
-        <h1 className="p-5 text-4xl font-light mb-2 text-gray-900">Item</h1>
+        <div className="min-h-screen bg-gray-50 p-6">
+            {/* Header */}
+            <div className="flex flex-col items-center">
+                <h1 className="text-4xl font-semibold text-gray-800 mb-6">Item Dashboard</h1>
+            </div>
+
+            {/* Search Bar */}
+            <div className="mb-6">
+                <SearchBar handleSearch={handleSearch} setSearchTerm={setSearchTerm} handleModal1={showAddItem} />
+            </div>
+
+            {/* Table */}
+            <div className="overflow-x-auto">
+                <table className="table-auto w-full border-collapse border border-gray-300 shadow-lg rounded-lg">
+                    <thead className="bg-sky-600 text-white">
+                    <tr>
+                        <th className="px-4 py-2 text-left">Book Name</th>
+                        <th className="px-4 py-2 text-left">Author</th>
+                        <th className="px-4 py-2 text-left">QTO</th>
+                        <th className="px-4 py-2 text-left">Price</th>
+                    </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                    {items.map((item: Item) => (
+                        <tr
+                            key={item.itemCode}
+                            className="hover:bg-gray-100 cursor-pointer transition"
+                            onClick={() => showUpdateItem(item)}
+                        >
+                            <td className="px-4 py-2">{item.desc}</td>
+                            <td className="px-4 py-2">{item.author}</td>
+                            <td className="px-4 py-2">{item.qto}</td>
+                            <td className="px-4 py-2">{item.price}</td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
+
+            {/* Modals */}
+            <AddItemModal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)} />
+            <UpdateItemModal
+                isOpen={isUpdateModalOpen}
+                onClose={() => setUpdateModalOpen(false)}
+                selectedItem={selectedItem}
+            />
         </div>
-    <div>
-        <SearchBar handleSearch={handleSearch} setSearchTerm={setSearchTerm} handleModal1={showAddItem}/>
-    </div>
-    <table className="table-auto border-2 border-sky-400 w-full">
-        <thead className="bg-sky-200">
-        <tr>
-            <td>Book Name</td>
-            <td>Author</td>
-            <td>QTO</td>
-            <td>Price</td>
-        </tr>
-        </thead>
-        <tbody>
-        {
-            items.map((item:Item) => (
-                <tr key={item.itemCode} onClick={() => showUpdateItem(item)}>
-                    <td>{item.desc}</td>
-                    <td>{item.author}</td>
-                    <td>{item.qto}</td>
-                    <td>{item.price}</td>
-                </tr>
-            ))
-        }
-        </tbody>
-    </table>
-            <AddItemModal isOpen={isAddModalOpen} onClose={()=>setAddModalOpen(false)}/>
-            <UpdateItemModal isOpen={isUpdateModalOpen}
-                             onClose={()=>setUpdateModalOpen(false)}
-                             selectedItem={selectedItem}/>
-        </>
-    )
+    );
 }
