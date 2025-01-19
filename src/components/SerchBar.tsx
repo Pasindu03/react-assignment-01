@@ -1,39 +1,32 @@
-
-
-const SearchBar = (props,children) => {
-
+const SearchBar = ({ handleSearch, setSearchTerm, handleModal1 }) => {
     return (
         <div className="container mx-auto mt-5">
-            <div className="flex justify-between mb-3">
-                <div className="w-1/2">
+            <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+                {/* Search Form */}
+                <div className="w-full md:w-2/3 mb-3 md:mb-0">
                     <form className="flex">
                         <input
-                            className="form-control me-2 border rounded p-2"
                             type="search"
                             placeholder="Search customer"
                             aria-label="Search"
-                            id="searchBar"
-                            onChange={(e) => props.setSearchTerm(e.target.value)}
+                            className="flex-grow border border-gray-300 rounded-l-md p-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            onChange={(e) => setSearchTerm(e.target.value)}
                         />
                         <button
-                            className="btn btn-outline-primary border rounded p-2"
                             type="button"
-                            id="searchButton"
-                            onClick={props.handleSearch}
+                            className="bg-indigo-500 text-white px-4 py-2 rounded-r-md hover:bg-indigo-600 focus:outline-none"
+                            onClick={handleSearch}
                         >
                             Search
                         </button>
                     </form>
-                    {/*<ul id="suggestions" className="mt-2">*/}
-                    {/*    {props.suggestions.map((suggestion, index) => (*/}
-                    {/*        <li key={index} className="border-b p-2">{suggestion}</li>*/}
-                    {/*    ))}*/}
-                    {/*</ul>*/}
                 </div>
-                <div className="w-1/2 text-right">
+
+                {/* Add Button */}
+                <div className="w-full md:w-1/3 text-right">
                     <button
-                        className="btn btn-outline-success border rounded p-2 mr-2"
-                        onClick={props.handleModal1}
+                        className="bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600 focus:outline-none shadow-md"
+                        onClick={handleModal1}
                     >
                         Add
                     </button>

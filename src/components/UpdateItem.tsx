@@ -1,79 +1,151 @@
-import {Item} from "../models/Item.ts";
-import {useDispatch} from "react-redux";
-import React, {useEffect, useState} from "react";
-
-import {deleteItem, updateItem} from "../reducer/ItemSlice.ts";
-
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { Item } from "../models/Item.ts";
+import { deleteItem, updateItem } from "../reducer/ItemSlice.ts";
 
 interface UpdateItemModalProps {
     isOpen: boolean;
     onClose: () => void;
-    selectedItem: Item|null;
+    selectedItem: Item | null;
 }
 
-const UpdateItemModal: React.FC<UpdateItemModalProps> = ({isOpen, onClose, selectedItem}) => {
+const UpdateItemModal: React.FC<UpdateItemModalProps> = ({ isOpen, onClose, selectedItem }) => {
     const dispatch = useDispatch();
 
-    const [itemCode, setItemCode] = useState('');
-    const [desc,setDesc] = useState('');
-    const [author,setAuthor] = useState('');
-    const [qto, setQto] = useState<number>();
-    const [price, setPrice] = useState<number>();
+    const [itemCode, setItemCode] = useState("");
+    const [desc, setDesc] = useState("");
+    const [author, setAuthor] = useState("");
+    const [qto, setQto] = useState<number | undefined>();
+    const [price, setPrice] = useState<number | undefined>();
 
     useEffect(() => {
-        if(selectedItem){
+        if (selectedItem) {
             setItemCode(selectedItem.itemCode);
             setDesc(selectedItem.desc);
             setAuthor(selectedItem.author);
             setQto(selectedItem.qto);
             setPrice(selectedItem.price);
         }
-    },[selectedItem]);
-
-    if(!isOpen) return null;
+    }, [selectedItem]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const item={
+        const updatedItem = {
             itemCode,
             desc,
             author,
             qto,
             price,
-        }
-        dispatch(updateItem(item));
+        };
+        dispatch(updateItem(updatedItem));
         onClose();
     };
-    const handleDelete = ()=>{
-        if(selectedItem){
+
+    const handleDelete = () => {
+        if (selectedItem) {
             dispatch(deleteItem(selectedItem));
         }
         onClose();
-    }
+    };
+
+    if (!isOpen) return null;
+
     return (
-        <>
-            <div className="fixed inset-0 flex items-center justify-center z-50">
-                <div className="bg-white p-5 rounded shadow-lg">
-                    <h2 className="text-xl mb-4">Update Customer</h2>
-                    <form onSubmit={handleSubmit}>
-                        <input type="text" placeholder={desc} className="border p-2 mb-2 w-full"
-                                onChange={(e) => setDesc(e.target.value)}/>
-                        <input type="text" placeholder={author} className="border p-2 mb-2 w-full"
-                                onChange={(e) => setAuthor(e.target.value)}/>
-                        <input type="number" placeholder={qto} className="border p-2 mb-2 w-full"
-                                onChange={(e) => setQto(e.target.value)}/>
-                        <input type="number" placeholder={price} className="border p-2 mb-2 w-full"
-                                onChange={(e) => setPrice(e.target.value)}/>
-                        <div className="flex justify-end">
-                            <button type="button" className="mr-2" onClick={onClose}>Cancel</button>
-                            <button type="submit" className="bg-blue-500 text-white p-2 rounded">Update</button>
-                            <button type="button" className=" bg-red-500 p-2 rounded" onClick={handleDelete}>Delete
-                            </button>
-                        </div>
-                    </form>
-                </div>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-6">Update Item</h2>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    {/* Description Field */}
+                    <div>
+                        <label htmlFor="item-desc" className="block text-sm font-medium text-gray-700">
+                            Item Description
+                        </label>
+                        <input
+                            type="text"
+                            id="item-desc"
+                            value={desc}
+                            placeholder="Enter item description"
+                            onChange={(e) => setDesc(e.target.value)}
+                            className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            required
+                        />
+                    </div>
+
+                    {/* Author Field */}
+                    <div>
+                        <label htmlFor="item-author" className="block text-sm font-medium text-gray-700">
+                            Author
+                        </label>
+                        <input
+                            type="text"
+                            id="item-author"
+                            value={author}
+                            placeholder="Enter author name"
+                            onChange={(e) => setAuthor(e.target.value)}
+                            className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            required
+                        />
+                    </div>
+
+                    {/* Quantity Field */}
+                    <div>
+                        <label htmlFor="item-quantity" className="block text-sm font-medium text-gray-700">
+                            Quantity
+                        </label>
+                        <input
+                            type="number"
+                            id="item-quantity"
+                            value={qto}
+                            placeholder="Enter quantity"
+                            onChange={(e) => setQto(Number(e.target.value))}
+                            className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            required
+                        />
+                    </div>
+
+                    {/* Price Field */}
+                    <div>
+                        <label htmlFor="item-price" className="block text-sm font-medium text-gray-700">
+                            Price
+                        </label>
+                        <input
+                            type="number"
+                            id="item-price"
+                            value={price}
+                            placeholder="Enter price"
+                            onChange={(e) => setPrice(Number(e.target.value))}
+                            className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            required
+                        />
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex justify-end space-x-3">
+                        <button
+                            type="button"
+                            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none"
+                            onClick={onClose}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
+                        >
+                            Update
+                        </button>
+                        <button
+                            type="button"
+                            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none"
+                            onClick={handleDelete}
+                        >
+                            Delete
+                        </button>
+                    </div>
+                </form>
             </div>
-        </>
-    )
-}
+        </div>
+    );
+};
+
 export default UpdateItemModal;
