@@ -1,8 +1,7 @@
-// src/components/AddItemModal.tsx
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Item } from "../models/Item.ts";
-import {useDispatch} from "react-redux";
-import {addToCart} from "../reducer/OrderDetailSlice.ts";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../reducer/OrderDetailSlice.ts";
 
 interface AddItemModalProps {
     isOpen: boolean;
@@ -11,11 +10,10 @@ interface AddItemModalProps {
 }
 
 const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, suggestions }) => {
-
     const dispatch = useDispatch();
 
-    const [itemCode, setItemCode] = useState('');
-    const [desc, setDesc] = useState('');
+    const [itemCode, setItemCode] = useState("");
+    const [desc, setDesc] = useState("");
     const [unitPrice, setUnitPrice] = useState<number>(0);
     const [qty, setQty] = useState<number>(0);
     const [subTotal, setSubTotal] = useState<number>(0);
@@ -25,9 +23,9 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, suggestion
         setItemCode(item.itemCode);
         setDesc(item.desc);
         setUnitPrice(item.price);
-        setShowSuggestions(false);
         setQty(1);
         setSubTotal(item.price);
+        setShowSuggestions(false);
     };
 
     const handleQuantityChange = (value: string) => {
@@ -37,62 +35,65 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, suggestion
     };
 
     const handleAddToCart = () => {
-
         const cartItem = {
-                itemCode,
-                desc,
-                unitPrice,
-                qty,
-                subTotal,
-        }
+            itemCode,
+            desc,
+            unitPrice,
+            qty,
+            subTotal,
+        };
 
         dispatch(addToCart(cartItem));
+        clearForm();
+        onClose();
+    };
 
-        setItemCode('');
-        setDesc('');
+    const clearForm = () => {
+        setItemCode("");
+        setDesc("");
         setUnitPrice(0);
         setQty(0);
         setSubTotal(0);
-        onClose();
     };
 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-            <div className="bg-white p-5 rounded shadow-lg w-11/12 md:w-1/2">
-                <h1 className="text-2xl font-bold mb-4">Add Item to Order</h1>
-                <form className="space-y-3">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                <h1 className="text-2xl font-bold mb-4 text-gray-800">Add Item to Order</h1>
+                <form className="space-y-4">
+                    {/* Item Code */}
                     <div>
-                        <label htmlFor="order-item-id" className="form-label">Item Id</label>
+                        <label className="block text-sm font-medium text-gray-700">Item ID</label>
                         <input
                             type="text"
-                            className="form-control border rounded p-2 w-full"
-                            id="order-item-id"
                             value={itemCode}
                             readOnly
+                            className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 focus:ring-indigo-500 focus:border-indigo-500"
                         />
                     </div>
+
+                    {/* Item Description */}
                     <div>
-                        <label htmlFor="order-item-desc" className="form-label">Item Description</label>
+                        <label className="block text-sm font-medium text-gray-700">Item Description</label>
                         <input
                             type="text"
-                            className="form-control border rounded p-2 w-full"
-                            id="order-item-desc"
                             value={desc}
                             onChange={(e) => {
                                 setDesc(e.target.value);
                                 setShowSuggestions(true);
                             }}
                             onFocus={() => setShowSuggestions(true)}
+                            placeholder="Enter item description"
+                            className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                         />
-                        {/* Suggestions List */}
                         {showSuggestions && suggestions.length > 0 && (
-                            <ul id="item-id-suggestions" className="mt-2 border border-gray-300 rounded">
+                            <ul className="mt-2 border border-gray-300 rounded-md bg-white max-h-32 overflow-y-auto shadow-md">
                                 {suggestions.map((item) => (
                                     <li
                                         key={item.itemCode}
-                                        className="border-b p-2 cursor-pointer hover:bg-gray-200"
+                                        className="px-4 py-2 cursor-pointer hover:bg-gray-100"
                                         onClick={() => handleItemSelect(item)}
                                     >
                                         {item.desc}
@@ -101,51 +102,59 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, suggestion
                             </ul>
                         )}
                     </div>
+
+                    {/* Unit Price */}
                     <div>
-                        <label htmlFor="order-item-price" className="form-label">Unit Price</label>
-                        <input
-                            type="text"
-                            className="form-control border rounded p-2 w-full"
-                            id="order-item-price"
-                            value={unitPrice}
-                            readOnly
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="order-item-qty" className="form-label">Quantity</label>
+                        <label className="block text-sm font-medium text-gray-700">Unit Price</label>
                         <input
                             type="number"
-                            className="form-control border rounded p-2 w-full"
-                            id="order-item-qty"
-                            placeholder="Enter Quantity"
+                            value={unitPrice}
+                            readOnly
+                            className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 focus:ring-indigo-500 focus:border-indigo-500"
+                        />
+                    </div>
+
+                    {/* Quantity */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Quantity</label>
+                        <input
+                            type="number"
                             value={qty}
                             onChange={(e) => handleQuantityChange(e.target.value)}
+                            placeholder="Enter quantity"
+                            className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                         />
                     </div>
+
+                    {/* Subtotal */}
                     <div>
-                        <label htmlFor="order-sub-total" className="form-label">Sub Total</label>
+                        <label className="block text-sm font-medium text-gray-700">Sub Total</label>
                         <input
-                            type="text"
-                            className="form-control border rounded p-2 w-full"
-                            id="order-sub-total"
+                            type="number"
                             value={subTotal}
                             readOnly
+                            className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 focus:ring-indigo-500 focus:border-indigo-500"
                         />
                     </div>
-                    <div>
-                        <button
-                            type="button"
-                            className="btn btn-outline-success w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600"
-                            onClick={handleAddToCart}
-                        >
-                            Add to Cart
-                        </button>
-                    </div>
+
+                    {/* Add to Cart Button */}
+                    <button
+                        type="button"
+                        className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 focus:outline-none"
+                        onClick={handleAddToCart}
+                    >
+                        Add to Cart
+                    </button>
                 </form>
+
+                {/* Close Button */}
                 <button
                     type="button"
-                    className="mt-4 w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600"
-                    onClick={onClose}
+                    className="w-full mt-4 bg-red-500 text-white py-2 rounded-md hover:bg-red-600 focus:outline-none"
+                    onClick={() => {
+                        clearForm();
+                        onClose();
+                    }}
                 >
                     Close
                 </button>
